@@ -1,22 +1,23 @@
 const { Given, When, Then } = require('@cucumber/cucumber');
-
-const LoginPage = require('../pageobjects/login.page');
-const SecurePage = require('../pageobjects/secure.page');
+const assert = require('assert');
+const SelectBookPage = require('../pageobjects/selectBook.page');
 
 const pages = {
-    login: LoginPage
+    'SelectBook': SelectBookPage
 }
 
-Given(/^I am on the (\w+) page$/, async (page) => {
-    await pages[page].open()
+Given('I want to search the book {string}', async (book) => {
+    await pages['SelectBook'].search(book);
+    await browser.pause(3000);
 });
 
-When(/^I login with (\w+) and (.+)$/, async (username, password) => {
-    await LoginPage.login(username, password)
+When('I go to the first option', async () => {
+    await pages['SelectBook'].select(1);
 });
 
-Then(/^I should see a flash message saying (.*)$/, async (message) => {
-    await expect(SecurePage.flashAlert).toBeExisting();
-    await expect(SecurePage.flashAlert).toHaveTextContaining(message);
+Then('I should see the {string} element', async (message) => {
+    assert.equal(
+        await pages['SelectBook'].addToCartButtonVisible(),
+        true);
 });
 
